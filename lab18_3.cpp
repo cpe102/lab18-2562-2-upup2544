@@ -8,7 +8,10 @@
 using namespace std;
 
 struct student{
-	//Define struct student with four member (name ,id , gender, gpa);
+	string name;
+	int id;
+	char gender;
+	double gpa;
 };
 
 struct course{
@@ -18,7 +21,7 @@ struct course{
 	vector<student *> student_list;
 };
 
-student * findstudent(vector<student> allstudents,int key){ //Correct this line
+student * findstudent(vector<student> &allstudents,int key){ //Correct this line
 	for(unsigned int i = 0; i < allstudents.size(); i++){
 		if(allstudents[i].id  == key) return &allstudents[i];
 	}
@@ -53,16 +56,18 @@ int main(){
 	vector<course> allcourses;
 	
 	string textline;
+	char namedata[100];
+    int iddata;
+	char genderdata,format[]="%[^,],%d,%c,%f";
+	float gpadata;
 	
-	while(getline(student_file,textline)){
-		student s; 
-	
-		//Assign value to the members of struct s;
-	
+	while(getline(student_file,textline)){ 
+		sscanf(textline.c_str(),format,namedata,&iddata,&genderdata,&gpadata);
+		student s={namedata,iddata,genderdata,gpadata};
 		allstudents.push_back(s); 		
 	}
 	
-	int state = 1;
+int state = 1;
 	while(getline(course_file,textline)){
 		if(state == 1){
 			course c;
@@ -75,7 +80,10 @@ int main(){
 		}else if(state == 2){
 			if(textline == "> Students"){
 				state = 3;
+				
 			}else{
+				allcourses[allcourses.size()-1].lecture_list.push_back(textline);
+
 				//Append lecture_list;
 			}			
 		}else{
@@ -83,10 +91,12 @@ int main(){
 				state = 1;
 			}else{
 				student *p = findstudent(allstudents,atof(textline.c_str()));
+				allcourses[allcourses.size()-1].student_list.push_back(p);
 				//Append student_list;
 			}
 		}
 	}
+
 	printreport(allcourses);
 	
 }
